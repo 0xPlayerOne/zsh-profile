@@ -2,11 +2,14 @@
 #   1.  TERMINAL SETUP
 #---------------------------------------------------------------------------------------------------------------------------------------
 
-# Set initial folder directory to Development
+# Set initial folder directory to dev
 # Only cd if running an interactive shell, not in SSH, and not launched by a code editor
-if [[ -z "$SSH_TTY" && -z "$VSCODE_PID" && -z "$TERM_PROGRAM" || "$TERM_PROGRAM" != "vscode" ]]; then
-    cd ~/Development
+if [[ -z "$SSH_TTY" && -z "$VSCODE_PID" && "$TERM_PROGRAM" != "vscode" && "$TERM_PROGRAM" != "kiro" ]]; then
+    cd ~/dev
 fi
+
+# Kiro (AWS IDE)
+[[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
 
 # Define Color Map
 typeset -A COLORS=(
@@ -145,11 +148,11 @@ dirdiff() { diff -u <(ls "$1" | sort) <(ls "$2" | sort); } # Compare directory l
 alias ..='cd ..'
 alias ...='cd ../../'
 alias ....='cd ../../../'
-alias desktop='clear && cd ~/Desktop && ls'         # Desktop directory
-alias development='clear && cd ~/Development && ls' # Development directory
-alias downloads='clear && cd ~/Downloads && ls'     # Downloads directory
-alias home='clear && cd ~ && ll'                    # Home directory
-cs() { cd "$@" && ls; }                             # Enter directory and list contents
+alias desktop='clear && cd ~/Desktop && ls'     # Desktop directory
+alias developer='clear && cd ~/dev && ls'       # Development directory
+alias downloads='clear && cd ~/Downloads && ls' # Downloads directory
+alias home='clear && cd ~ && ll'                # Home directory
+cs() { cd "$@" && ls; }                         # Enter directory and list contents
 
 # List files
 alias ls='colorls -A --sort-dirs --report' # Override ls to colorls | default list all with directories first + add report
@@ -211,10 +214,12 @@ alias gitstats='git-stats'
 alias gits='git status -s'
 
 # Add and commit helpers
+alias gaa='git add .'
+alias gcm='git commit -m'
 alias gita='git add -A && git status -s'
 alias gitcom='git commit -am'
 alias gitacom='git add -A && git commit -am'
-alias gitundo='git reset --soft HEAD~1' # Undo last commit (soft reset)
+alias gitundo='git reset --soft HEAD~1' # Undo last commit (soft reset)\
 
 # Branch and checkout
 alias gitc='git checkout'
@@ -423,6 +428,12 @@ ssh-add-all() {
 #   8.  TAB COMPLETION & AUTO-SUGGESTIONS
 #-----------------------------------------------------------------------------------------------------------------------
 
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=($HOME/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
+
 # Load Homebrew Zsh plugins
 if type brew &>/dev/null; then
     # Load Zsh third-party tab completions
@@ -487,6 +498,7 @@ alias network-ip='ipconfig getifaddr en0'
 alias public-ip='curl ipecho.net/plain; echo'
 alias zprofile='code ~/.zprofile'
 alias zshrc='code ~/.zshrc'
+alias cleanports='kill -9 $(lsof -ti :3000,3001,3002,3003) 2>/dev/null || echo "No processes found"'
 re-source() {
     local original_dir=$PWD
     source ~/.zprofile

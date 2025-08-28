@@ -53,10 +53,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$BREW/opt/nvm/nvm.sh" ] && \. "$BREW/opt/nvm/nvm.sh"
 [ -s "$BREW/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$BREW/opt/nvm/etc/bash_completion.d/nvm"
 
-# pnpm (Node package manager)
-export PNPM_HOME="$HOME/Library/pnpm"
-add_to_path "$PNPM_HOME"
-
 # Ruby
 add_to_path "$BREW/opt/ruby/bin"
 # export LDFLAGS="-L$BREW/opt/ruby/lib"
@@ -74,7 +70,7 @@ add_to_path "$ANDROID_HOME/platform-tools"
 add_to_path "$ANDROID_HOME/cmdline-tools/latest/bin"
 
 # Flutter
-add_to_path "$HOME/Development/flutter/bin"
+add_to_path "$HOME/dev/flutter/bin"
 
 #---------------------------------------------------------------------------------------------------------------------------------------
 #   5. OTHER TOOLS & FRAMEWORKS
@@ -92,6 +88,7 @@ export TF_CPP_MIN_LOG_LEVEL=3
 
 # Windsurf (AI IDE)
 add_to_path "$HOME/.codeium/windsurf/bin"
+
 
 #---------------------------------------------------------------------------------------------------------------------------------------
 #   6. SYSTEM UTILS & PACKAGE MANAGERS
