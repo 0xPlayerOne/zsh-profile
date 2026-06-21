@@ -11,12 +11,16 @@ ulimit -n 10240
 # Parallel native builds for Node
 export JOBS=max
 
+# Shared default directories
+export DEV_DIR="${DEV_DIR:-$HOME/dev}"
+
 #---------------------------------------------------------------------------------------------------------------------------------------
 #   2. PATH CONFIGURATIONS
 #---------------------------------------------------------------------------------------------------------------------------------------
 
 # Helper to safely prepend to PATH
 add_to_path() {
+  [[ -d "$1" ]] || return
   case ":$PATH:" in
   *":$1:"*) ;; # already in PATH
   *) PATH="$1:$PATH" ;;
@@ -45,6 +49,10 @@ add_to_path "$GOBIN"
 add_to_path "$BREW/opt/jenv/bin"
 eval "$(jenv init -)"
 
+# pnpm
+export PNPM_HOME="$HOME/Library/pnpm"
+add_to_path "$PNPM_HOME/bin"
+
 # Local node modules binaries
 add_to_path "./node_modules/.bin"
 
@@ -52,6 +60,9 @@ add_to_path "./node_modules/.bin"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$BREW/opt/nvm/nvm.sh" ] && \. "$BREW/opt/nvm/nvm.sh"
 [ -s "$BREW/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$BREW/opt/nvm/etc/bash_completion.d/nvm"
+
+# Python
+add_to_path "$BREW/opt/python@3.11/bin"
 
 # Ruby
 add_to_path "$BREW/opt/ruby/bin"
@@ -70,7 +81,7 @@ add_to_path "$ANDROID_HOME/platform-tools"
 add_to_path "$ANDROID_HOME/cmdline-tools/latest/bin"
 
 # Flutter
-add_to_path "$HOME/dev/flutter/bin"
+add_to_path "$DEV_DIR/flutter/bin"
 
 #---------------------------------------------------------------------------------------------------------------------------------------
 #   5. OTHER TOOLS & FRAMEWORKS
@@ -82,6 +93,15 @@ alias goal="$HOME/node/goal"
 
 # colorls (Ruby gem)
 add_to_path "$(ruby -e 'puts Gem.bindir')"
+
+# Google Antigravity IDE
+add_to_path "$HOME/.antigravity/antigravity/bin"
+
+# LM Studio CLI
+add_to_path "$HOME/.lmstudio/bin"
+
+# MTPLX terminal command
+add_to_path "$HOME/.mtplx/bin"
 
 # TensorFlow (ML Framework) - hide log warnings
 export TF_CPP_MIN_LOG_LEVEL=3

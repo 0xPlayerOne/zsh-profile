@@ -2,10 +2,12 @@
 #   1.  TERMINAL SETUP
 #---------------------------------------------------------------------------------------------------------------------------------------
 
+ZSH_PROFILE_DIR="${${(%):-%N}:A:h}"
+
 # Set initial folder directory to dev
 # Only cd if running an interactive shell, not in SSH, and not launched by a code editor
-if [[ -z "$SSH_TTY" && -z "$VSCODE_PID" && "$TERM_PROGRAM" != "vscode" && "$TERM_PROGRAM" != "kiro" ]]; then
-    cd ~/dev
+if [[ -z "$SSH_TTY" && -z "$VSCODE_PID" && "$TERM_PROGRAM" != "vscode" && "$TERM_PROGRAM" != "kiro" && -d "$DEV_DIR" ]]; then
+    cd "$DEV_DIR"
 fi
 
 # Kiro (AWS IDE)
@@ -34,17 +36,20 @@ typeset -A COLORS=(
 
 # Count number of files/folders in current directory
 parse_file_number() {
-    local lsc=(colorls -A)
-    "${lsc[@]}" | wc -l | tr -d ' '
+    if type colorls &>/dev/null; then
+        colorls -A | wc -l | tr -d ' '
+    else
+        command ls -A1 | wc -l | tr -d ' '
+    fi
 }
 
 # Set a specific color for the status of the Git repo
 git_color() {
     if ! git rev-parse --git-dir >/dev/null 2>&1; then
         echo "" # nothing if not a git repo
-    elif [[ -n $(git status --porcelain) ]]; then
+    elif [[ -n $(git status --porcelain 2>/dev/null) ]]; then
         echo "${COLORS[red]}" # red if need to commit
-    elif [[ -n $(git cherry -v) ]]; then
+    elif [[ -n $(git cherry -v 2>/dev/null) ]]; then
         echo "${COLORS[yellow]}" # yellow if need to push
     else
         echo "${COLORS[green]}" # green if everything is clean
@@ -149,22 +154,26 @@ alias ..='cd ..'
 alias ...='cd ../../'
 alias ....='cd ../../../'
 alias desktop='clear && cd ~/Desktop && ls'     # Desktop directory
-alias developer='clear && cd ~/dev && ls'       # Development directory
+alias developer='clear && cd "$DEV_DIR" && ls' # Development directory
 alias downloads='clear && cd ~/Downloads && ls' # Downloads directory
-alias home='clear && cd ~ && ll'                # Home directory
+alias home='clear && cd ~ && ls'                # Home directory
 cs() { cd "$@" && ls; }                         # Enter directory and list contents
 
-# List files
-alias ls='colorls -A --sort-dirs --report' # Override ls to colorls | default list all with directories first + add report
-alias lsh='colorls --help'                 # Displays help prompt for colorls
-alias lsd='ls --dirs'                      # List directories only
-alias lsf='ls --files'                     # List files only
-alias lst='ls --tree'                      # List directory tree
-alias lsg='ls --git-status'                # Lists all with git status
-alias lsl='ls --long'                      # Long list all by default sorting
-alias lsls='lsl -S'                        # Long list all by size, largest first
-alias lslt='lsl -t'                        # Long list all by modification time, newest first
-alias lslx='lsl -X'                        # Long list all by extension
+# List files (prefer colorls when available)
+if type colorls &>/dev/null; then
+    alias ls='colorls -A --sort-dirs --report' # Override ls to colorls | default list all with directories first + add report
+    alias lsh='colorls --help'                 # Displays help prompt for colorls
+    alias lsd='ls --dirs'                      # List directories only
+    alias lsf='ls --files'                     # List files only
+    alias lst='ls --tree'                      # List directory tree
+    alias lsg='ls --git-status'                # Lists all with git status
+    alias lsl='ls --long'                      # Long list all by default sorting
+    alias lsls='lsl -S'                        # Long list all by size, largest first
+    alias lslt='lsl -t'                        # Long list all by modification time, newest first
+    alias lslx='lsl -X'                        # Long list all by extension
+else
+    alias lsh='echo "colorls is not installed"'
+fi
 
 #---------------------------------------------------------------------------------------------------------------------------------------
 #   3.  PACKAGE MANAGERS
@@ -223,7 +232,7 @@ alias gitundo='git reset --soft HEAD~1' # Undo last commit (soft reset)\
 
 # Branch and checkout
 alias gitc='git checkout'
-alias gitcm='git checkout master'
+alias gitcm='git checkout main'
 alias gitb='git branch'
 alias gitcb='git checkout -b'
 alias gitdb='git branch -d'
@@ -239,7 +248,7 @@ alias gitpo='git push -u origin'
 
 # Merge / Rebase
 alias gitm='git merge'
-alias gitmm='git merge master'
+alias gitmm='git merge main'
 alias git-rebase-main='git checkout main && git pull && git checkout staging && git rebase main && git push -f'
 
 # Clone
@@ -285,7 +294,7 @@ gitreset() {
 
 # Docker core aliases
 alias dk='docker'
-alias dco='docker-compose'
+alias dco='docker compose'
 
 # Container management
 alias dkps='docker ps'                               # List running containers
@@ -316,50 +325,11 @@ alias dkri='docker run --rm -i '
 alias dkrit='docker run --rm -it '
 
 # Docker Compose
-alias dcol='docker-compose logs -f --tail 100'
-alias dcou='docker-compose up'
-alias dcofresh='docker-compose-fresh'
+alias dcol='docker compose logs -f --tail 100'
+alias dcou='docker compose up'
+alias dcofresh='docker compose down --remove-orphans && docker compose up --build'
 
-# ================================= PROJECT SPECIFIC DOCKER COMMANDS ================================= #
-
-# Devzone container
-alias dz-run='make docker run-devzone run-celery'
-alias dz-stop='docker-compose stop'
-alias dz-start='docker-compose start'
-alias dz-kill='docker-compose down'
-
-# Playpants
-alias pp-test='make -f Makefile.rpmvenv run-dev-platform-api.tests.playpants'
-alias pp-build='docker exec -it devzone_app_1 /bin/bash -c "python ./devzone/manage.py dumpdata playpants.ProjectSettingGroup --indent 4 > ./devzone/playpants/fixtures/initial_project_settings.json"'
-
-# Activity Launcher / LSG/MMP / Redis / Ab Testing / Achievement Engine
-alias dz-al='make run-activity-launcher'
-alias dz-lsg='make run-lsgmmp20'
-alias dz-ab='make run-abtesting'
-alias dz-ae='make run-ae'
-alias dz-redis='make run-redis'
-alias dz-flower='make run-flower'
-alias dz-sls='make run-sls'
-
-# Run all Devzone
-alias dz-run-all='dz-run && dz-al && dz-lsg && dz-ab && dz-ae'
-
-# Devzone Utils
-alias dz-help='make all'
-alias dz-shell='make docker-shell'
-alias dz-lint='make -f Makefile.rpmvenv py-lint'
-alias dz-log='docker logs -f devzone_app_1'
-alias dz-mm='docker exec devzone_app_1 python ./devzone/manage.py makemigrations'
-alias dz-migrate='docker exec devzone_app_1 python ./devzone/manage.py migrate'
-alias dz-req='docker exec -it devzone_app_1 /bin/bash -c "source /usr/share/venvs/devzone/bin/activate && pip install -r rpm/requirements.txt && service httpd restart"'
 alias docker-prune='docker system prune --volumes -f'
-
-# Crypto Bot
-alias build-bot='docker build -t bot-img .'
-alias run-bot='docker run -d -ti --name crypto-bot bot-img'
-alias kill-bot='docker stop crypto-bot'
-alias bot-logs='docker logs crypto-bot'
-alias bot-shell='docker attach crypto-bot'
 
 #---------------------------------------------------------------------------------------------------------------------------------------
 #   6.  OS X COMMANDS
@@ -388,8 +358,26 @@ alias fix-audio='sudo launchctl kickstart -k system/com.apple.audio.coreaudiod' 
 
 # SSH Aliases
 alias ping-pi='ping pi.local'
-alias ssh-pi='ssh andrewmahoney-fernandes@192.168.1.208'
-alias getsshkey='pbcopy < ~/.ssh/id_rsa.pub' # Copy SSH public key to clipboard
+ssh-pi() {
+    : "${PI_SSH_TARGET:?Set PI_SSH_TARGET in your shell config}"
+    ssh "$PI_SSH_TARGET"
+}
+
+getsshkey() {
+    local key_path="${1:-$HOME/.ssh/id_ed25519.pub}"
+
+    if [[ ! -f "$key_path" && "$key_path" == "$HOME/.ssh/id_ed25519.pub" ]]; then
+        key_path="$HOME/.ssh/id_rsa.pub"
+    fi
+
+    if [[ ! -f "$key_path" ]]; then
+        echo 'No SSH public key found. Pass a path or create one in ~/.ssh.'
+        return 1
+    fi
+
+    pbcopy < "$key_path"
+    echo "Copied $(basename "$key_path") to clipboard"
+}
 
 # Helper functions for SSH config management
 
@@ -430,23 +418,29 @@ ssh-add-all() {
 
 # The following lines have been added by Docker Desktop to enable Docker CLI completions.
 fpath=($HOME/.docker/completions $fpath)
-autoload -Uz compinit
-compinit
 # End of Docker CLI completions
+
+autoload -Uz compinit
+
+BREW_PREFIX=""
 
 # Load Homebrew Zsh plugins
 if type brew &>/dev/null; then
+    BREW_PREFIX="$(brew --prefix)"
     # Load Zsh third-party tab completions
-    FPATH="$(brew --prefix)/share/zsh-completions:$FPATH"
-    # Activate Zsh's native completion system
-    autoload -Uz compinit && compinit
+    FPATH="$BREW_PREFIX/share/zsh-completions:$FPATH"
+fi
 
+# Initialize completion after all completion directories are registered.
+compinit
+
+if [[ -n "$BREW_PREFIX" ]]; then
     # Load Zsh syntax highlighting plugin
-    source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    [[ -f "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
     # Load Zsh history substring search plugin (Note: need to load after syntax-highlighting)
-    source "$(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh"
+    [[ -f "$BREW_PREFIX/share/zsh-history-substring-search/zsh-history-substring-search.zsh" ]] && source "$BREW_PREFIX/share/zsh-history-substring-search/zsh-history-substring-search.zsh"
     # Load Zsh autosuggestions plugin
-    source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    [[ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 fi
 
 # Keybindings
@@ -494,21 +488,31 @@ alias q='exit'
 alias json='fx'
 alias crypto='cointop'
 alias h='history'
-alias network-ip='ipconfig getifaddr en0'
+network-ip() {
+    local iface
+    iface="$(route get default 2>/dev/null | awk '/interface:/{print $2; exit}')"
+    if [[ -n "$iface" ]]; then
+        ipconfig getifaddr "$iface"
+    else
+        ipconfig getifaddr en0
+    fi
+}
 alias public-ip='curl ipecho.net/plain; echo'
-alias zprofile='code ~/.zprofile'
-alias zshrc='code ~/.zshrc'
+alias zprofile='code "$ZSH_PROFILE_DIR/zprofile"'
+alias zshrc='code "$ZSH_PROFILE_DIR/zshrc"'
 alias cleanports='kill -9 $(lsof -ti :3000,3001,3002,3003) 2>/dev/null || echo "No processes found"'
 re-source() {
     local original_dir=$PWD
-    source ~/.zprofile
-    source ~/.zshrc
+    source "$ZSH_PROFILE_DIR/zprofile"
+    source "$ZSH_PROFILE_DIR/zshrc"
     cd "$original_dir"
 }
 bash-as() { sudo -u "$1" /bin/bash; }
 
 # Terminal auto correction
-eval "$(thefuck --alias --shell=zsh)"
+if type thefuck &>/dev/null; then
+    eval "$(thefuck --alias --shell=zsh)"
+fi
 alias please='fuck'
 
 # Display the weather using wttr.in

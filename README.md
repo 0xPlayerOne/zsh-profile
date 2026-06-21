@@ -10,6 +10,13 @@
 - [`~/.zshrc`](./zshrc)  
   Contains functions, aliases, and settings applied to interactive non-login shells.
 
+### 🧭 Shared Config Rules
+
+- Put PATH entries, environment exports, and machine-added CLI bootstrap in [`zprofile`](./zprofile).
+- Keep prompt logic, aliases, and interactive shell functions in [`zshrc`](./zshrc).
+- Use generic references such as `$HOME`; never commit username-specific absolute paths like `/Users/your-name/...`.
+- Keep machine-specific hosts and usernames as environment variables such as `PI_SSH_TARGET`, and edit shared files directly when needed.
+
 ### 🔧  Helpful Tools
 
 - [Homebrew](https://brew.sh/) - Package manager for macOS.
