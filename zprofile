@@ -33,19 +33,18 @@ export BREW="/opt/homebrew" # brew --prefix
 # Core paths
 add_to_path "$BREW/bin"
 add_to_path "$BREW/sbin"
+add_to_path "$HOME/bin"
+add_to_path "$HOME/.local/bin" # NemoClaw / local CLI tools
 
 #---------------------------------------------------------------------------------------------------------------------------------------
 #   MISE — unified toolchain manager (owns Node / Python / Rust version pins)
 #   Versions: Node 24.18.0, Python 3.11.15, Rust 1.97.1 (see ~/.config/mise/config.toml)
 #   Replaces nvm +brew python@3.11 + manual rustup-in-shell. `mise` is the single source of truth.
-#   Activated HERE (before .local/bin, HOME/bin) so mise shims always shadow local tools.
+#   Activated AFTER brew/.local so mise shims are FIRST in PATH (prepended on top).
 #---------------------------------------------------------------------------------------------------------------------------------------
 if command -v mise &>/dev/null; then
   eval "$(mise activate zsh)"
 fi
-
-add_to_path "$HOME/bin"
-add_to_path "$HOME/.local/bin" # NemoClaw / local CLI tools
 
 # jEnv (Java environment manager) — kept for Android SDK JDK dependency
 add_to_path "$BREW/opt/jenv/bin"
