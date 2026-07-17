@@ -40,14 +40,10 @@ add_to_path "$HOME/.local/bin" # NemoClaw / local CLI tools
 #   3. DEVELOPER TOOLING (Languages, Runtimes, Version/Package Managers)
 #---------------------------------------------------------------------------------------------------------------------------------------
 
-# Rust (rustup-managed)
-[ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
+# Rust (rustup-managed) — sourced globally via ~/.zshenv (covers non-interactive shells too)
+# (cargo env load lives in zshenv so it's available for `zsh -c` / CI / build tools)
 
-# Go (Golang)
-add_to_path "$BREW/opt/go/libexec/bin"
-export GOPATH="$HOME/go"
-export GOBIN="$GOPATH/bin"
-add_to_path "$GOBIN"
+# Go (Golang) — REMOVED: unused, preferred Rust instead
 
 # jEnv (Java environment manager)
 add_to_path "$BREW/opt/jenv/bin"
