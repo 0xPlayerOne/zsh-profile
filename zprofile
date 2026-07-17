@@ -45,33 +45,34 @@ add_to_path "$HOME/.local/bin" # NemoClaw / local CLI tools
 
 # Go (Golang) — REMOVED: unused, preferred Rust instead
 
-# jEnv (Java environment manager)
+#---------------------------------------------------------------------------------------------------------------------------------------
+#   MISE — unified toolchain manager (owns Node / Python / Rust version pins)
+#   Versions: Node 24.18.0, Python 3.11.15, Rust 1.97.1 (see ~/.config/mise/config.toml)
+#   Replaces nvm +brew python@3.11 + manual rustup-in-shell. `mise` is the single source of truth.
+#---------------------------------------------------------------------------------------------------------------------------------------
+if command -v mise &>/dev/null; then
+  eval "$(mise activate zsh)"
+fi
+
+# jEnv (Java environment manager) — kept for Android SDK JDK dependency
 add_to_path "$BREW/opt/jenv/bin"
 eval "$(jenv init -)"
 
-# pnpm
+# pnpm (falls under Node/mise; global bin)
 export PNPM_HOME="$HOME/Library/pnpm"
 add_to_path "$PNPM_HOME/bin"
 
-# Local node modules binaries
+# Local node modules binaries (project-local, always last)
 add_to_path "./node_modules/.bin"
-
-# NVM (Node Version Manager)
-export NVM_DIR="$HOME/.nvm"
-[ -s "$BREW/opt/nvm/nvm.sh" ] && \. "$BREW/opt/nvm/nvm.sh"
-[ -s "$BREW/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$BREW/opt/nvm/etc/bash_completion.d/nvm"
 
 # Bun (global bin: pi + other bun-installed CLIs)
 add_to_path "$HOME/.bun/bin"
 
-# Python
-add_to_path "$BREW/opt/python@3.11/bin"
+# Python — managed by mise (3.11.15). uv is the package manager.
+# No brew python@3.11 path needed; mise injects the pinned interpreter onto PATH.
 
-# Ruby
+# Ruby — orphaned (only eza replaced colorls); kept for legacy gems
 add_to_path "$BREW/opt/ruby/bin"
-# export LDFLAGS="-L$BREW/opt/ruby/lib"
-# export CPPFLAGS="-I$BREW/opt/ruby/include"
-# export PKG_CONFIG_PATH="$BREW/opt/ruby/lib/pkgconfig"
 
 #---------------------------------------------------------------------------------------------------------------------------------------
 #   4. MOBILE DEVELOPMENT
@@ -94,7 +95,7 @@ add_to_path "$DEV_DIR/flutter/bin"
 export ALGORAND_DATA="$HOME/node/data"
 alias goal="$HOME/node/goal"
 
-# colorls (Ruby gem)
+# Ruby gem bin dir (colorls was replaced by eza; other gems may still use this)
 add_to_path "$(ruby -e 'puts Gem.bindir')"
 
 # Google Antigravity IDE

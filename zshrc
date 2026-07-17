@@ -36,8 +36,8 @@ typeset -A COLORS=(
 
 # Count number of files/folders in current directory
 parse_file_number() {
-    if type colorls &>/dev/null; then
-        colorls -A | wc -l | tr -d ' '
+    if type eza &>/dev/null; then
+        eza -a | wc -l | tr -d ' '
     else
         command ls -A1 | wc -l | tr -d ' '
     fi
@@ -159,20 +159,20 @@ alias downloads='clear && cd ~/Downloads && ls' # Downloads directory
 alias home='clear && cd ~ && ls'                # Home directory
 cs() { cd "$@" && ls; }                         # Enter directory and list contents
 
-# List files (prefer colorls when available)
-if type colorls &>/dev/null; then
-    alias ls='colorls -A --sort-dirs --report' # Override ls to colorls | default list all with directories first + add report
-    alias lsh='colorls --help'                 # Displays help prompt for colorls
-    alias lsd='ls --dirs'                      # List directories only
-    alias lsf='ls --files'                     # List files only
-    alias lst='ls --tree'                      # List directory tree
-    alias lsg='ls --git-status'                # Lists all with git status
-    alias lsl='ls --long'                      # Long list all by default sorting
-    alias lsls='lsl -S'                        # Long list all by size, largest first
-    alias lslt='lsl -t'                        # Long list all by modification time, newest first
-    alias lslx='lsl -X'                        # Long list all by extension
+# List files (prefer eza — Rust ls replacement for colorls)
+if type eza &>/dev/null; then
+    alias ls='eza -a --group-directories-first --icons' # Override ls to eza | default list all, dirs first + icons
+    alias lsh='eza --help'                        # Displays help prompt for eza
+    alias lsd='eza --only-dirs'                   # List directories only
+    alias lsf='eza --only-files'                  # List files only
+    alias lst='eza --tree'                        # List directory tree
+    alias lsg='eza --git --long'                  # Long list all with git status
+    alias lsl='eza --long'                        # Long list all by default sorting
+    alias lsls='lsl -s size'                      # Long list all by size, largest first
+    alias lslt='lsl -s modified'                 # Long list all by modification time, newest first
+    alias lslx='lsl -s extension'                # Long list all by extension
 else
-    alias lsh='echo "colorls is not installed"'
+    alias lsh='echo "eza is not installed"'
 fi
 
 #---------------------------------------------------------------------------------------------------------------------------------------
@@ -207,7 +207,7 @@ alias yarnout='yarn outdated'
 # Node environments
 alias node-dev='export NODE_ENV=development'
 alias node-prod='export NODE_ENV=production'
-alias nvmrc='node -v > .nvmrc'
+alias pinnode='node -v > .tool-versions'    # pin current node to mise .tool-versions
 
 # Python
 alias python="python3"
@@ -472,10 +472,10 @@ autoload -U colors && colors
 # Completion case-insensitive matching
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
-# Optional: colorls flags tab completion
-if type colorls &>/dev/null; then
-    COLORLS_COMPLETION="$(dirname "$(which colorls)")/tab_complete.sh"
-    [[ -f "$COLORLS_COMPLETION" ]] && source "$COLORLS_COMPLETION"
+# eza flags tab completion (replaces colorls)
+if type eza &>/dev/null; then
+    EZA_COMPLETION="$(dirname "$(which eza)")/../share/zsh/site-functions/_eza"
+    [[ -f "$EZA_COMPLETION" ]] && source "$EZA_COMPLETION"
 fi
 
 #---------------------------------------------------------------------------------------------------------------------------------------

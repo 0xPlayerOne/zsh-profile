@@ -4,11 +4,11 @@
 
 ### 📄  Configuration Files
 
-- [`~/.zprofile`](./zprofile)  
-  Loads terminal settings, exports, and paths on login shells.
+- [`~/.zshenv`](./zshenv)  \n  Sourced for EVERY zsh (login, interactive, AND non-interactive `zsh -c`). Minimal — only what must be on PATH for non-interactive contexts (e.g. cargo for build tools).
 
-- [`~/.zshrc`](./zshrc)  
-  Contains functions, aliases, and settings applied to interactive non-login shells.
+- [`~/.zprofile`](./zprofile)  \n  Loads terminal settings, exports, and paths on login shells.
+
+- [`~/.zshrc`](./zshrc)  \n  Contains functions, aliases, and settings applied to interactive non-login shells.
 
 ### 🧭 Shared Config Rules
 
@@ -20,10 +20,10 @@
 ### 🔧  Helpful Tools
 
 - [Homebrew](https://brew.sh/) - Package manager for macOS.
-- [nvm](https://github.com/nvm-sh/nvm) - Node version manager
+- [mise](https://mise.jdx.dev/) - Unified toolchain manager (Node 24.18.0 / Python 3.11.15 / Rust 1.97.1 pins). Replaces nvm + brew python.
 - [jEnv](https://github.com/jenv/jenv) - Java environment manager
+- [eza](https://github.com/eza-community/eza) - Modern Rust `ls` replacement (replaces colorls)
 - [Dracula Theme](https://draculatheme.com/terminal/) - Dark and beautiful theme capatible with bash
-- [colorls](https://github.com/athityakumar/colorls) - Add color and icons to ls
 - [zsh-users](https://github.com/zsh-users) - Collection of powerfull Zsh plugins such as autosuggestions, syntax-highlighting, and completions
 - [thefuck](https://github.com/nvbn/thefuck) - Console command error corrector
 - [cointop](https://github.com/miguelmota/cointop) - Interactive terminal based UI application for tracking cryptocurrencies
