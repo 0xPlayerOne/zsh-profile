@@ -34,10 +34,14 @@ export BREW="/opt/homebrew" # brew --prefix
 add_to_path "$BREW/bin"
 add_to_path "$BREW/sbin"
 add_to_path "$HOME/bin"
+add_to_path "$HOME/.local/bin" # NemoClaw / local CLI tools
 
 #---------------------------------------------------------------------------------------------------------------------------------------
 #   3. DEVELOPER TOOLING (Languages, Runtimes, Version/Package Managers)
 #---------------------------------------------------------------------------------------------------------------------------------------
+
+# Rust (rustup-managed)
+[ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
 
 # Go (Golang)
 add_to_path "$BREW/opt/go/libexec/bin"
@@ -60,6 +64,9 @@ add_to_path "./node_modules/.bin"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$BREW/opt/nvm/nvm.sh" ] && \. "$BREW/opt/nvm/nvm.sh"
 [ -s "$BREW/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$BREW/opt/nvm/etc/bash_completion.d/nvm"
+
+# Bun (global bin: pi + other bun-installed CLIs)
+add_to_path "$HOME/.bun/bin"
 
 # Python
 add_to_path "$BREW/opt/python@3.11/bin"
