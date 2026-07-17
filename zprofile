@@ -44,6 +44,7 @@ add_to_path "$HOME/.local/bin" # NemoClaw / local CLI tools
 #---------------------------------------------------------------------------------------------------------------------------------------
 if command -v mise &>/dev/null; then
   eval "$(mise activate zsh)"
+  hash -r  # rehash after PATH changes so shims shadow local tools
 fi
 
 # jEnv (Java environment manager) — kept for Android SDK JDK dependency
