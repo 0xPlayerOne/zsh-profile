@@ -1,6 +1,0 @@
-[tools]
-
-# no mise-managed tools for this stack (Unity/dotnet/C# use globals)
-
-[settings]
-experimental = true

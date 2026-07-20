@@ -1,9 +1,0 @@
-# mise.toml — toolchain version pins (single source of truth for this machine)
-# Activated via `eval "$(mise activate zsh)"` in zprofile.
-# See https://mise.jdx.dev/
-
-[tools]
-node = "24.18.0"
-python = "3.11.15"
-rust = "1.97.1"
-java = "21.0.2"
