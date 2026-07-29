@@ -420,6 +420,9 @@ ssh-add-all() {
 fpath=($HOME/.docker/completions $fpath)
 # End of Docker CLI completions
 
+# Bun completion is registered by compinit from its #compdef header.
+[[ -d "$HOME/.bun" ]] && fpath=("$HOME/.bun" $fpath)
+
 autoload -Uz compinit
 
 BREW_PREFIX=""
@@ -471,12 +474,6 @@ autoload -U colors && colors
 
 # Completion case-insensitive matching
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-
-# eza flags tab completion (replaces colorls)
-if type eza &>/dev/null; then
-    EZA_COMPLETION="$(dirname "$(which eza)")/../share/zsh/site-functions/_eza"
-    [[ -f "$EZA_COMPLETION" ]] && source "$EZA_COMPLETION"
-fi
 
 #---------------------------------------------------------------------------------------------------------------------------------------
 #   9.  MISC UTILITY ALIASES & FUNCTIONS

@@ -87,9 +87,6 @@ alias goal="$HOME/node/goal"
 # Ruby gem bin dir (colorls was replaced by eza; other gems may still use this)
 add_to_path "$(ruby -e 'puts Gem.bindir')"
 
-# Google Antigravity IDE
-add_to_path "$HOME/.antigravity/antigravity/bin"
-
 # LM Studio CLI
 add_to_path "$HOME/.lmstudio/bin"
 
@@ -98,10 +95,6 @@ add_to_path "$HOME/.mtplx/bin"
 
 # TensorFlow (ML Framework) - hide log warnings
 export TF_CPP_MIN_LOG_LEVEL=3
-
-# Windsurf (AI IDE)
-add_to_path "$HOME/.codeium/windsurf/bin"
-
 
 #---------------------------------------------------------------------------------------------------------------------------------------
 #   6. SYSTEM UTILS & PACKAGE MANAGERS
