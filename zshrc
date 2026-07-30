@@ -4,9 +4,9 @@
 
 ZSH_PROFILE_DIR="${${(%):-%N}:A:h}"
 
-# Set initial folder directory to dev
-# Only cd if running an interactive shell, not in SSH, and not launched by a code editor
-if [[ -z "$SSH_TTY" && -z "$VSCODE_PID" && "$TERM_PROGRAM" != "vscode" && "$TERM_PROGRAM" != "kiro" && -d "$DEV_DIR" ]]; then
+# Default vanilla terminal shells to the development directory, but preserve
+# any directory supplied by a launcher such as Codex, VS Code, or Kiro.
+if [[ -z "$SSH_TTY" && "$PWD" == "$HOME" && -d "$DEV_DIR" ]]; then
     cd "$DEV_DIR"
 fi
 
