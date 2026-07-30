@@ -10,6 +10,18 @@
 
 - [`~/.zshrc`](./zshrc)  \n  Contains functions, aliases, and settings applied to interactive non-login shells.
 
+### 🔗 Install as the global configuration
+
+From this repository, link the three Zsh entry points into your home directory:
+
+```sh
+ln -sfn "$PWD/zshenv" "$HOME/.zshenv"
+ln -sfn "$PWD/zprofile" "$HOME/.zprofile"
+ln -sfn "$PWD/zshrc" "$HOME/.zshrc"
+```
+
+The active machine uses these links, so future changes should be made in this repository rather than in `$HOME`.
+
 ### 🧭 Shared Config Rules
 
 - Put PATH entries, environment exports, and machine-added CLI bootstrap in [`zprofile`](./zprofile).
