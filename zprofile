@@ -51,8 +51,8 @@ fi
 export PNPM_HOME="$HOME/Library/pnpm"
 add_to_path "$PNPM_HOME/bin"
 
-# Local node modules binaries (project-local, always last)
-add_to_path "./node_modules/.bin"
+# Project-local binaries are resolved by package-manager scripts. Do not add
+# a relative path here: it would let the current directory shadow trusted tools.
 
 # Bun (global bin: pi + other bun-installed CLIs)
 add_to_path "$HOME/.bun/bin"
